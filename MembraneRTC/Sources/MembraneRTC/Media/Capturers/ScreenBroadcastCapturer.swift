@@ -105,10 +105,10 @@ class ScreenBroadcastCapturer: RTCVideoCapturer, VideoCapturer {
 
         super.init(delegate: source)
 
-        // check every 2 seconds if the screensharing is still active or crashed
+        // check every 5 seconds if the screensharing is still active or crashed
         // this is needed as we can't know if the IPC Client stopped working or not, so at least
         // we can check that that we receiving some samples
-        timeoutTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] timer in
+        timeoutTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] timer in
             guard let self = self else {
                 timer.invalidate()
                 return

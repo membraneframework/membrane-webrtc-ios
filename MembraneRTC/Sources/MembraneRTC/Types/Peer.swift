@@ -30,4 +30,15 @@ public struct Peer: Codable {
         
         return Peer(id: self.id, metadata: self.metadata, trackIdToMetadata: newTrackIdToMetadata)
     }
+    
+    enum CodingKeys: String, CodingKey {
+        case id, metadata, trackIdToMetadata
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.metadata = try container.decode(Metadata.self, forKey: .metadata)
+        self.trackIdToMetadata = try container.decodeIfPresent([String: Metadata].self, forKey: .trackIdToMetadata)
+    }
 }

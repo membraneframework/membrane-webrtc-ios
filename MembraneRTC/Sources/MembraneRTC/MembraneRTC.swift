@@ -49,6 +49,9 @@ public class MembraneRTC: MulticastDelegate<MembraneRTCDelegate>, ObservableObje
 
     var state: State
     private var transport: EventTransport
+    
+    // a common stream ID used for all non-screenshare and audio tracks
+    private let localStreamId = UUID().uuidString
 
     // `RTCPeerConnection` config
     private var config: RTCConfiguration
@@ -160,6 +163,12 @@ public class MembraneRTC: MulticastDelegate<MembraneRTCDelegate>, ObservableObje
      */
     public func createVideoTrack(videoParameters: VideoParameters, metadata: Metadata) -> LocalVideoTrack {
         let videoTrack = LocalVideoTrack.create(for: .camera, videoParameters: videoParameters)
+        
+        if state == .connected {
+            connection?.add(videoTrack.rtcTrack(), streamIds: [localStreamId])
+            connection?.enforceSendOnlyDirection()
+        }
+        
         videoTrack.start()
         
         localTracks.append(videoTrack)
@@ -186,6 +195,12 @@ public class MembraneRTC: MulticastDelegate<MembraneRTCDelegate>, ObservableObje
      */
     public func createAudioTrack(metadata: Metadata) -> LocalAudioTrack {
         let audioTrack = LocalAudioTrack()
+        
+        if state == .connected {
+            connection?.add(audioTrack.rtcTrack(), streamIds: [localStreamId])
+            connection?.enforceSendOnlyDirection()
+        }
+        
         audioTrack.start()
         
         localTracks.append(audioTrack)
@@ -297,8 +312,8 @@ public class MembraneRTC: MulticastDelegate<MembraneRTCDelegate>, ObservableObje
             return
         }
 
-        let localStreamId = UUID().uuidString
-        pc.add(track.rtcTrack(), streamIds: [localStreamId])
+        let screencastStreamId = UUID().uuidString
+        pc.add(track.rtcTrack(), streamIds: [screencastStreamId])
 
         pc.enforceSendOnlyDirection()
 
@@ -329,9 +344,6 @@ public class MembraneRTC: MulticastDelegate<MembraneRTCDelegate>, ObservableObje
         connection = peerConnection
 
         peerConnection.delegate = self
-
-        // common stream id for the local video and audio tracks
-        let localStreamId = UUID().uuidString
         
         localTracks.forEach { track in
             peerConnection.add(track.rtcTrack(), streamIds: [localStreamId])

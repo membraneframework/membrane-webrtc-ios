@@ -27,6 +27,7 @@ Pod::Spec.new do |s|
   s.dependency 'SwiftPhoenixClient'
   s.dependency 'Logging'
   s.dependency 'SwiftCollection'
+  s.pod_target_xcconfig = { 'ENABLE_BITCODE' => 'NO' }
 
   s.subspec "Broadcast" do |spec|
     spec.source_files = "MembraneRTC/Sources/MembraneRTC/Media/BroadcastSampleSource.swift", "MembraneRTC/Sources/MembraneRTC/IPC/**/*.{h,m,mm,swift}"

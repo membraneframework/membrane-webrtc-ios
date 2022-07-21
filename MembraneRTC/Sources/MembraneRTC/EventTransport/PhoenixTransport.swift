@@ -19,10 +19,10 @@ public class PhoenixTransport: EventTransport {
 
     let queue = DispatchQueue(label: "membrane.rtc.transport", qos: .background)
 
-    public init(url: String, topic: String) {
+    public init(url: String, topic: String, params: [String: Any]) {
         self.topic = topic
-
-        socket = Socket(endPoint: url, transport: { URLSessionTransport(url: $0) })
+        
+        socket = Socket(endPoint: url, transport: { URLSessionTransport(url: $0) }, paramsClosure: { params })
     }
 
     public func connect(delegate: EventTransportDelegate) -> Promise<Void> {

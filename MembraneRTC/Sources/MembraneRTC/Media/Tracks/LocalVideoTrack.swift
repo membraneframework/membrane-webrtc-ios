@@ -33,6 +33,8 @@ public class LocalVideoTrack: VideoTrack, LocalTrack {
     internal func createCapturer(videoSource _: RTCVideoSource) -> VideoCapturer {
         fatalError("Basic LocalVideoTrack does not provide a default capturer")
     }
+    
+    public var trackID: String { track.trackId }
 
     public func start() {
         capturer?.startCapture()

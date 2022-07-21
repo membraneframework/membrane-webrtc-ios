@@ -298,6 +298,17 @@ struct OfferDataEvent: ReceivableEvent, Codable {
         let iceTransportPolicy: String
         let integratedTurnServers: [TurnServer]
         let tracksTypes: [String: Int]
+        
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            self.integratedTurnServers = try container.decode([TurnServer].self, forKey: .integratedTurnServers)
+            self.tracksTypes = try container.decode([String: Int].self, forKey: .tracksTypes)
+            if container.contains(.iceTransportPolicy) {
+                self.iceTransportPolicy = try container.decode(String.self, forKey: .iceTransportPolicy)
+            } else {
+                self.iceTransportPolicy = "all"
+            }
+        }
     }
 
     let type: ReceivableEventType
